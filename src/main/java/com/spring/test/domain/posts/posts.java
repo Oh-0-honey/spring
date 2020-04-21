@@ -4,13 +4,18 @@ import com.spring.test.domain.BaseTimeEntity;
 import lombok.*;
 import javax.persistence.*;
 
+
+/*
+    글을 쓰는 post 기능의 Entity 클래스
+    Entity class에는 절대 Setter를 만들지 않는다.
+ */
 @Getter
 @NoArgsConstructor
 @Entity
 public class posts extends BaseTimeEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id//PK임을 나타냄
+    @GeneratedValue(strategy = GenerationType.IDENTITY)//PK 생성 규칙
     private Long id;
 
     @Column(length = 500, nullable = false)

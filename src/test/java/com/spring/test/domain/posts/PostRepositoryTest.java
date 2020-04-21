@@ -15,10 +15,11 @@ import static org.assertj.core.api.Assertions.assertThat;
 @SpringBootTest
 public class PostRepositoryTest {
 
-    @Autowired
+    @Autowired//bean을 주입받음
     PostRepository postRepository;
-    @After
-    public void cleanup(){
+
+    @After//이하 메소드는 단위 테스트가 끝날 때 마다 수행됨
+    public void cleanup(){//테스트간 데이터 침범을 막기 위해 사용
         postRepository.deleteAll();;
     }
 
@@ -26,13 +27,13 @@ public class PostRepositoryTest {
     public void 게시글저장_불러오기(){
         String title="테스트 글";
         String content = "테스트 내용";
-        postRepository.save(posts.builder()
+        postRepository.save(posts.builder()//.save는 post 테이블에 대해 insert/update 쿼리를 실행. id값 유무에 따라 있으면 update, 없으면 insert
                             .title(title)
                             .content(content)
                             .author("oyh@naver.com")
                             .build());
 
-        List<posts> postsList=postRepository.findAll();
+        List<posts> postsList=postRepository.findAll();//테이블 post에 모든 데이터 조회
 
         posts post= postsList.get(0);
         assertThat(post.getTitle()).isEqualTo(title);

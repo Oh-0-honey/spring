@@ -11,13 +11,13 @@ import javax.persistence.MappedSuperclass;
 import java.time.LocalDateTime;
 
 @Getter
-@MappedSuperclass
-@EntityListeners(AuditingEntityListener.class)
+@MappedSuperclass//class내 변수 2개를 칼럼으로 인식하도록 한다.
+@EntityListeners(AuditingEntityListener.class)//이 클래스에 auditing(회계감사)기능을 포함시킨다. auditing은 공통적으로 쓸 칼럼을 자동으로 넣는 기능이다.
 public abstract class BaseTimeEntity {
 
-    @CreatedDate
+    @CreatedDate//
     private LocalDateTime createdDate;
 
-    @LastModifiedDate
+    @LastModifiedDate//
     private LocalDateTime modifiedDate;
 }

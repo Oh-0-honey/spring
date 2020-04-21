@@ -22,7 +22,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)//JPA기능까지 한번에 테스트할 때는 WebMvcTest 대신 이것을 사용
 public class PostsApiControllerTest {
 
     @LocalServerPort
