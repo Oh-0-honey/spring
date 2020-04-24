@@ -6,16 +6,16 @@
         <div class="row">
             <div class="col-md-6">
                 <a href="/posts/save" role="button" class="btn btn-primary">글 등록</a><!-- 클릭하면 /posts/save로 이동하는 버튼 -->
-                {{#userName}}<!--userName의 true/false여부를 판단. 참거짓만 판단하므로 최종값을 넘겨줘야함-->
-                    Logged in as: <span id="user">{{userName}}</span><!--userName이 있다면 노출시켜라-->
+                {{#memberName}}<!--memberName의 true/false여부를 판단. 참거짓만 판단하므로 최종값을 넘겨줘야함--><!--userName하면 윈도우에선 윈도우 계정을 불러오는 오류가 있음-->
+                    Logged in as: <span id="user">{{memberName}}</span><!--memberName이 있다면 노출시켜라-->
                     <a href="/logout" class="btn btn-info active" role="button">Logout</a><!--스프링 시큐리티에서 기본적으로 제공하는 로그아웃-->
 
-                {{/userName}}
+                {{/memberName}}
 
-                {{^userName}}<!--userName이 존재하지 않는 경우-->
+                {{^memberName}}<!--memberName이 존재하지 않는 경우-->
                     <a href="/oauth2/authorization/google" class="btn btn-success active" role="button">Google Login</a><!--스스에서 기본적으로 제공하는 로그인-->
                     <a href="/oauth2/authorization/naver" class="btn btn-secondary active" role="button">Naver Login</a>
-                {{/userName}}
+                {{/memberName}}
             </div>
         </div>
 
