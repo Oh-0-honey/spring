@@ -24,7 +24,7 @@ public class OAuthAttributes {
         this.picture=picture;
     }
 
-    //사용자 정보는 Mpa으로 OAuth2User에서 받기 때문에 하나하나 변환 필요
+    //사용자 정보는 Map으로 OAuth2User에서 받기 때문에 하나하나 변환 필요
     public static OAuthAttributes of(String registrationId, String userNameAttributeName, Map<String, Object> attributes){
         if("naver".equals(registrationId)) return ofNaver("id",attributes);
         return ofGoogle(userNameAttributeName, attributes);
