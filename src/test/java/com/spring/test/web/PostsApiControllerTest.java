@@ -1,5 +1,6 @@
 package com.spring.test.web;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.spring.test.domain.posts.PostRepository;
 import com.spring.test.domain.posts.posts;
 import com.spring.test.web.dto.PostsSaveRequestDto;
@@ -11,14 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
 @RunWith(SpringRunner.class)
@@ -39,7 +45,21 @@ public class PostsApiControllerTest {
         postRep.deleteAll();
     }
 
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mvc;
+
+    @Before//테스트 시작 전에 SpringBootTest -> MockMvcTest를 위해 MockMvc 인스턴스 생성
+    public void setup(){
+        mvc= MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build();
+    }
+
     @Test
+    @WithMockUser(roles = "USER")//모의 사용자
     public void Posts_등록() throws Exception{
         String title= "title";
         String content="content";
@@ -49,10 +69,18 @@ public class PostsApiControllerTest {
 
         String url = "http://localhost:"+port+"/api/v1/posts";
 
+        /*
         ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, reqDto,Long.class);
-
         assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
         assertThat(responseEntity.getBody()).isGreaterThan(0L);
+        */
+
+        mvc.perform(post(url)//생성된 MockMvc를 통해 API 테스트
+                .contentType(MediaType.APPLICATION_JSON_UTF8)//본문을 문자열 표현을 위해 json으로 변환
+                .content(new ObjectMapper().writeValueAsString(reqDto)))
+                .andExpect(status().isOk());
+
+
 
         List<posts> all=postRep.findAll();
         assertThat(all.get(0).getTitle()).isEqualTo(title);
@@ -61,6 +89,7 @@ public class PostsApiControllerTest {
 
 
     @Test
+    @WithMockUser(roles = "USER")//모의 사용자
     public void Posts_수정() throws Exception{
         posts savedPosts= postRep.save(posts.builder()
                                         .title("title")
@@ -76,12 +105,11 @@ public class PostsApiControllerTest {
                                             .build();
         String url="http://localhost:"+port+"api/v1/posts/"+updateId;
 
-        HttpEntity<PostsUpdateRequestDto> requestEntity=new HttpEntity<>(requestDto);
 
-        ResponseEntity<Long> responseEntity=restTemplate.exchange(url, HttpMethod.PUT,requestEntity,Long.class);
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+        mvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
 
         List<posts> all=postRep.findAll();
         assertThat(all.get(0).getTitle()).isEqualTo(expectedTitle);
